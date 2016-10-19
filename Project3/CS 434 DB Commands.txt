@@ -1,0 +1,116 @@
+//---Table Creation---
+
+CREATE TABLE IF NOT EXISTS Statute(
+	CodeDesignation VARCHAR(12) NOT NULL,
+	ElementsOfCrime INT UNSIGNED NOT NULL,'
+	PRIMARY KEY (CodeDesignation)
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS CriminalIncident(
+	IncidentNumber INT(9) UNSIGNED NOT NULL,
+	TimeOccurred SMALLINT(4) UNSIGNED NOT NULL,
+	DateOccurred DATE NOT NULL,
+	Address VARCHAR(50) NOT NULL,
+	PRIMARY KEY (IncidentNumber)
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS DefinedBy(
+	Def_IncidentNumber INT(9) UNSIGNED NOT NULL,
+	Def_CodeDesignation VARCHAR(12) NOT NULL,
+	PRIMARY KEY (Def_IncidentNumber),
+	FOREIGN KEY (Def_IncidentNumber) REFERENCES CriminalIncident(IncidentNumber),
+	FOREIGN KEY (Def_CodeDesignation) REFERENCES Statute(CodeDesignation)
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS CrimeReport(
+	ReportNumber INT(9) UNSIGNED NOT NULL,
+	DateFiled DATE NOT NULL,
+	Description VARCHAR(200) NOT NULL,
+	PRIMARY KEY (ReportNumber)
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS ReportedThrough(
+	Rep_ReportNumber INT(9) UNSIGNED NOT NULL,
+	Rep_IncidentNumber INT(9) UNSIGNED NOT NULL,
+	PRIMARY KEY (Rep_ReportNumber),
+	FOREIGN KEY (Rep_ReportNumber) REFERENCES CrimeReport(ReportNumber),
+	FOREIGN KEY (Rep_IncidentNumber) REFERENCES CriminalIncident(IncidentNumber)
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS StatusUpdate(
+	Stat_ReportNumber INT(9) UNSIGNED NOT NULL,
+	RevisionNumber TINYINT UNSIGNED NOT NULL,
+	DateRevised DATE NOT NULL,
+	Status TINYINT(1) UNSIGNED NOT NULL,
+	PRIMARY KEY (Stat_ReportNumber, RevisionNumber),
+	FOREIGN KEY (Stat_ReportNumber) REFERENCES CrimeReport(ReportNumber)
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS PoliceOfficer(
+	DateGraduated DATE NOT NULL,
+	BadgeNumber SMALLINT(5) UNSIGNED NOT NULL,
+	LastName VARCHAR(25) NOT NULL,
+	FirstName VARCHAR(25) NOT NULL,
+	PRIMARY KEY (DateGraduated, BadgeNumber)
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS FiledBy(
+	File_DateGraduated DATE NOT NULL,
+	File_BadgeNumber SMALLINT(5) UNSIGNED NOT NULL,
+	File_ReportNumber INT(9) UNSIGNED NOT NULL,
+	PRIMARY KEY (File_DateGraduated, File_BadgeNumber),
+	FOREIGN KEY (File_DateGraduated, File_BadgeNumber) REFERENCES PoliceOfficer(DateGraduated, BadgeNumber),
+	FOREIGN KEY (File_ReportNumber) REFERENCES CrimeReport(ReportNumber)
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS PoliceDepartment(
+	PrecinctNumber TINYINT(2) UNSIGNED NOT NULL,
+	Jurisdiction VARCHAR(50) NOT NULL,
+	PRIMARY KEY (PrecinctNumber)
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS MemberOf(
+	Mem_DateGraduated DATE NOT NULL,
+	Mem_BadgeNumber SMALLINT(5) UNSIGNED NOT NULL,
+	Mem_PrecinctNumber TINYINT(2) UNSIGNED NOT NULL,
+	PRIMARY KEY (Mem_DateGraduated, Mem_BadgeNumber),
+	FOREIGN KEY (Mem_DateGraduated, Mem_BadgeNumber) REFERENCES PoliceOfficer(DateGraduated, BadgeNumber),
+	FOREIGN KEY (Mem_PrecinctNumber) REFERENCES PoliceDepartment(PrecinctNumber)
+) ENGINE = InnoDB;
+
+//---Record Insertion---
+
+INSERT INTO Statute (CodeDesignation, ElementsOfCrime) VALUES ('PEN-102', 1003813), ('PEN-211', 120038),
+	('PEN-240', 5164921), ('PEN-187', 6839), ('PEN-404', 583860);
+
+INSERT INTO PoliceOfficer (DateGraduated, BadgeNumber, LastName, FirstName) VALUES ('2002-10-18', 12001, 'Hershey', 'John'),
+	('1999-02-27', 9942, 'Jijekjesh', 'Ryan'), ('1983-07-22', 76, 'Cornish', 'Eleanor'),
+	('1992-03-13', 406, 'Brown', 'Susan'), ('1977-09-11', 22, 'Davis', 'Miles');
+
+INSERT INTO PoliceDepartment (PrecinctNumber, Jurisdiction) VALUES (1, 'Central Area'), (2, 'Rampart Area'),
+	(3, 'Southwest Area'), (4, 'Hollenbeck Area'), (5, 'Harbor Area');
+
+INSERT INTO CriminalIncident (IncidentNumber, TimeOccurred, DateOccurred, Address) VALUES (132007717, 2015, '2013-03-20',
+	'Oxford'), (130608787, 445, '2013-03-10', 'Odin Street'), (131820260, 745, '2013-12-18', '105th Street'), (131817514,
+	1730, '2013-10-18', '101st Street'), (130510483, 2000, '2013-05-25', 'West Sepulveda Boulevard');
+
+INSERT INTO DefinedBy (Def_IncidentNumber, Def_CodeDesignation) VALUES (132007717, 'PEN-187'), (130608787, 'PEN-187'),
+	(131820260, 'PEN-404'), (131817514, 'PEN-404'), (130510483, 'PEN-211');
+
+**INSERT INTO ReportedThrough (Rep_ReportNumber, Rep_IncidentNumber) VALUES (132007717, 132007717), (130608787, 130608787),
+	(131820260, 131820260), (131817514, 131817514), (130510483, 13051043);
+
+INSERT INTO CrimeReport (ReportNumber, DateFiled, Description) VALUES (132007717, '2013-03-20', 'TRAFFIC DR # EXPIRED'),
+	(130608787, '2013-03-10', 'TRAFFIC DR # EXPIRED'), (131820260, '2013-12-18', 'TRAFFIC DR # EXPIRED'),
+	(131817514, '2013-10-18', 'TRAFFIC DR # EXPIRED'), (130510483, '2013-05-26', 'PLAIN THEFT UNDER $400. MISSING PURSE.')
+
+INSERT INTO StatusUpdate (Stat_ReportNumber, RevisionNumber, DateRevised, Status) VALUES (132007717, 1, '2013-03-20', 1),
+	(130510483, 1, '2013-05-26', 2), (130510483, 2, '2013-07-13', 3), (131817514, 1, '2013-10-18', 2),
+	(131817514, '2013-10-18', 3);
+
+**INSERT INTO FiledBy (File_DateGraduated, File_BadgeNumber, File_ReportNumber) VALUES ('1977-09-11', 22, 132007717),
+	('1999-02-27', 9942, 132007717), ('1992-03-13', 406, 130510483), ('1983-07-22', 76, 130510483),
+	('2002-10-18', 12001, 131817514);
+
+**INSERT INTO MemberOf (Mem_DateGraduated, Mem_BadgeNumber, Mem_PrecinctNumber) VALUES ('1977-09-11', 22, 1),
+	('1999-02-27', 9942, 2), ('2002-10-18', 12001, 1), ('1983-07-22', 76, 1), ('1992-03-13', 406, 2);
