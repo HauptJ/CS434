@@ -1,0 +1,4 @@
+1.) 13
+2.) SELECT name, title
+FROM movieExec LEFT JOIN movies
+ON movieExec.certnum = movies.producerCnum
