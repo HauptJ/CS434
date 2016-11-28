@@ -1,0 +1,20 @@
+1.)
+6
+
+2.) 
+SELECT movieExec.name, movieExec.certnum, movies.title
+
+FROM movieExec, movies 
+
+WHERE movieExec.certnum = movies.producerCnum
+
+GROUP BY name
+
+3.) 16
+
+4.)
+Select m1.movietitle, m2.movietitle
+
+From starsin m1, starsin m2
+
+Where m1.starname = "Harrison Ford" AND m2.starname = "Harrison Ford"
