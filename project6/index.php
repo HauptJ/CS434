@@ -114,6 +114,15 @@ FROM PoliceOfficer NATURAL JOIN PoliceDepartment
 
 GROUP BY BadgeNumber;");
 
+//Unique Querry 3
+$UniqueQuery3 = $connection->prepare("SELECT File_ReportNumber, Mem_PrecinctNumber, Jurisdiction
+FROM FiledBy, MemberOf, PoliceDepartment
+WHERE File_DateGraduated = Mem_DateGraduated AND File_BadgeNumber = Mem_BadgeNumber
+AND PrecinctNumber = Mem_PrecinctNumber AND Jurisdiction IN
+(SELECT Jurisdiction
+FROM PoliceDepartment
+WHERE PrecinctNumber = 7);");
+
 
 
 //Execute the queries
@@ -121,6 +130,8 @@ GROUP BY BadgeNumber;");
 $UniqueQuery1->execute();
 
 $UniqueQuery2->execute();
+
+$UniqueQuery3->execute();
 
 
 
@@ -185,6 +196,43 @@ echo "<tr><th>Number of Police Officers</th><th>Date Graduated</th></tr>";
 //Extract the results using the TableRows class
 
 foreach(new TupleResult(new RecursiveArrayIterator($UniqueQuery2->fetchAll())) as $key=>$value)
+
+{
+
+    echo $value;
+
+}
+
+//END Table
+echo "</table>";
+
+echo "<br></br>";
+
+
+//For Unique Query 3: Create a results array and then extract + format the returned data from the execute() statement
+
+$results3 = $UniqueQuery3->setFetchMode(PDO::FETCH_ASSOC);
+
+
+//Table3
+
+echo "<table style='border: solid 1px black'>";
+
+echo "<p>Reports Filed In Precinct 7 and the Jurisdiction Wilshire</p>";
+echo "<br>";
+echo "<p>SELECT File_ReportNumber, Mem_PrecinctNumber, Jurisdiction
+FROM FiledBy, MemberOf, PoliceDepartment
+WHERE File_DateGraduated = Mem_DateGraduated AND File_BadgeNumber = Mem_BadgeNumber
+AND PrecinctNumber = Mem_PrecinctNumber AND Jurisdiction IN
+(SELECT Jurisdiction
+FROM PoliceDepartment
+WHERE PrecinctNumber = 7);</p>";
+
+echo "<tr><th>Report Number</th><th>Precinct</th><th>Jurisdiction</th></tr>";
+
+//Extract the results using the TableRows class
+
+foreach(new TupleResult(new RecursiveArrayIterator($UniqueQuery3->fetchAll())) as $key=>$value)
 
 {
 
