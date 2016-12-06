@@ -1,5 +1,49 @@
 <?php
 
+//Variables for storing the required credentials
+
+$servername = "localhost";
+
+$username = "root";
+
+$password = "odOrXPVk5xcTdgvP";
+
+$databasename = "LACrimeFixMe";
+
+
+//Try to connect to our database
+
+try
+
+    {
+
+    //The actual database connection line
+
+    $connection = new PDO("mysql:host=$servername;dbname=$databasename", $username, $password);
+
+
+
+    //Set the PDO error mode to exception so we can return proper error messages
+
+    $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    echo "Connected successfully"; 
+
+    }
+
+
+
+//If the above code fails (i.e. an exception is caught), print the appropriate error message
+
+catch(PDOException $errmessage)
+
+    {
+
+    echo "Connection failed: " . $errmessage->getMessage();
+
+    }
+
+
 //First, start off the HTTP that creates a table of returned results
 
 echo "<table style='border: solid 1px black'>";
@@ -55,81 +99,11 @@ class TupleResult extends RecursiveIteratorIterator {
 
 
 
-//Variables for storing the required credentials
-
-$servername = "localhost";
-
-$username = "root";
-
-$password = "odOrXPVk5xcTdgvP";
-
-$databasename = "LACrimeFixMe";
 
 
 
 //Variables for executing custom queries later (needs to be rearranged with the creation of table headers)
 
-$selectField1 = null;
-
-$selectField2 = null;
-
-$selectField3 = null;
-
-$selectField4 = null;
-
-$selectField5 = null;
-
-$selectField6 = null;
-
-
-
-$fromField1 = null;
-
-$fromField2 = null;
-
-$fromField3 = null;
-
-
-
-$whereField1 = null;
-
-$whereField2 = null;
-
-$whereField3 = null;
-
-
-
-//Try to connect to our database
-
-try
-
-    {
-
-    //The actual database connection line
-
-    $connection = new PDO("mysql:host=$servername;dbname=$databasename", $username, $password);
-
-
-
-    //Set the PDO error mode to exception so we can return proper error messages
-
-    $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    echo "Connected successfully"; 
-
-    }
-
-
-
-//If the above code fails (i.e. an exception is caught), print the appropriate error message
-
-catch(PDOException $errmessage)
-
-    {
-
-    echo "Connection failed: " . $errmessage->getMessage();
-
-    }
 
 
 
