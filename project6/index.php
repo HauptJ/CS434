@@ -6,6 +6,13 @@ echo "<table style='border: solid 1px black'>";
 
 echo "<p>Number of Reports filed by an Officer</p>";
 echo "<br>";
+echo "<p>SELECT COUNT(File_ReportNumber), FirstName, LastName
+
+FROM PoliceOfficer, FiledBy
+
+WHERE File_DateGraduated = DateGraduated AND File_BadgeNumber = BadgeNumber
+
+GROUP BY FirstName, LastName;</p>";
 
 echo "<tr><th>Number of Reports</th><th>Firstname</th><th>Lastname</th></tr>";
 
@@ -56,7 +63,7 @@ $username = "root";
 
 $password = "odOrXPVk5xcTdgvP";
 
-$databasename = "project5test2";
+$databasename = "LACrimeFixMe";
 
 
 
@@ -151,45 +158,6 @@ $query->execute();
 //Create a results array and then extract + format the returned data from the execute() statement
 
 $results = $query->setFetchMode(PDO::FETCH_ASSOC);
-
-//-----INSERT-----// WORKS
-
-$InsertQuery = $connection->prepare("INSERT INTO CriminalIncident (IncidentNumber, TimeOccurred, DateOccurred, Address) VALUES(9997, 2030, 2016-11-02,'Smiley Street');");
-
-//check if value exists before insert
-
-$TestInsert->execute();
-
-if (mysql_num_rows($TestInsert) > 0) {
-	echo "<p>Value already exists in database</p>";
-}
-
-
-//Execute the query
-
-$InsertQuery->execute();
-
-if (!$InsertQuery) {
-	die('Query Error');
-}
-
-
-//Create a results array and then extract + format the returned data from the execute() statement
-
-$InsertResults = $InsertQuery->setFetchMode(PDO::FETCH_ASSOC);
-
-
-//-----DELETE-----//
-
-$DeleteQuery = $connection->prepare("DELETE FROM Statute WHERE CodeDesignation = 110;");
-
-//Execute the query
-
-$DeleteQuery->execute();
-
-//Create a results array and then extract + format the returned data from the execute() statement
-
-$DeleteResults = $DeleteQuery->setFetchMode(PDO::FETCH_ASSOC);
 
 
 
