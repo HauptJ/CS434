@@ -80,16 +80,16 @@ function UpdateConstraints() {
     var optionIndex = 0;
     var strIndex = String(optionIndex);
     //alert('index');
-    var optionText = "None";
+    var optionText = " ";
     //alert('text');
-    var optionValue = "None";
+    var optionValue = " ";
     //alert('value');
     var content = 'The index, text, and value are: ';
     //alert('content');
     content = content + " " + strIndex + " " + optionText + " " + optionValue;
     //alert(content);
 
-    //Get each selFields <select> control and set the text and values for its 0th-index option to 'None'
+    //Get each selFields <select> control and set the text and values for its 0th-index option to ' '
     AlterCstOptions(optionValue, optionText, optionIndex);
 
     //After we've done all that, update the optionIndex value
@@ -321,7 +321,7 @@ function UpdateConstraints() {
     //Finally, if optionIndex < 13
     while (optionIndex < 13) {
 
-        optionValue = "None";
+        optionValue = " ";
         optionText = " ";
         AlterCstOptions(optionValue, optionText, optionIndex);
         optionIndex = optionIndex + 1;
@@ -381,16 +381,16 @@ function UpdateDropdowns() {
     var optionIndex = 0;
     var strIndex = String(optionIndex);
     //alert('index');
-    var optionText = "None";
+    var optionText = " ";
     //alert('text');
-    var optionValue = "None";
+    var optionValue = " ";
     //alert('value');
     var content = 'The index, text, and value are: ';
     //alert('content');
     content = content + " " + strIndex + " " + optionText + " " + optionValue;
     //alert(content);
 
-    //Get each selFields <select> control and set the text and values for its 0th-index option to 'None'
+    //Get each selFields <select> control and set the text and values for its 0th-index option to ' '
     AlterOptions(optionValue, optionText, optionIndex);
 
     //After we've done all that, update the optionIndex value
@@ -622,7 +622,7 @@ function UpdateDropdowns() {
     //Finally, if optionIndex < 13
     while (optionIndex < 13) {
 
-        optionValue = "None";
+        optionValue = " ";
         optionText = " ";
         AlterOptions(optionValue, optionText, optionIndex);
         optionIndex = optionIndex + 1;

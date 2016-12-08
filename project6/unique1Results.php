@@ -1,5 +1,7 @@
 <?php
 
+<?php include_once 'nav.php'; ?>
+
 //Variables for storing the required credentials
 
 $servername = "localhost";
@@ -53,7 +55,21 @@ $BadgeNumber = $_POST["BadgeNumber"];
 echo $BadgeNumber;
 echo "<br>";
 
-
+//Check if badge number number is a valid integer between 1 and 1000
+if ((ctype_digit((string)$BadgeNumber)) == False) {
+	echo "<p>Badge number number is not an integer</p>";
+	echo "<br>";
+	echo "<p>Aborting execution</p>";
+	echo "<br>";
+	exit();
+}
+if (intval($BadgeNumber) < 1 or intval($BadgeNumber) > 1000) {
+	echo "<p>Badge number is not between 1 and 1000</p>";
+	echo "<br>";
+	echo "<p>Aborting execution</p>";
+	echo "<br>";
+	exit();
+}
 
 
 

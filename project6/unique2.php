@@ -1,7 +1,9 @@
 <html>
 <body>
 
-<h1></h1>
+<?php include_once 'nav.php'; ?>
+
+<h1>Number of Reports Filed in a Precinct</h1>
 
 <p><b>Data Format:</b></p>
 <p>Enter a Precinct number as an integer from 1 to 21.</p>

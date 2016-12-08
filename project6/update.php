@@ -1,5 +1,7 @@
 <html>
 <body>
+	
+<?php include_once 'nav.php'; ?>
 
 <h1>Update Status Report</h1>
 

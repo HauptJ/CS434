@@ -70,7 +70,7 @@ $counter = 1;
 
 //First, iterate through our list of select fields to see how many there are
 for ($x = 0; $x < 6; $x++) {
-    if ($selFields[$x] != "None") {
+    if ($selFields[$x] != "") {
         $numSelect = $numSelect + 1;
     }
 }
@@ -79,7 +79,7 @@ for ($x = 0; $x < 6; $x++) {
 for ($x = 0; $x < 6; $x++) {
 
     //If this selFields element has been given a non-empty value
-    if ($selFields[$x] != "None") {
+    if ($selFields[$x] != "") {
 
         //Add its value to the SELECT segment
         $stmtSelect .= " ";
@@ -174,7 +174,7 @@ $converter = 999;
 
 //First, iterate through our constraints to see how many are fully filled out
 for ($x = 0; $x < 3; $x++) {
-    if ( ($selConstraints[$x] != "None") and ($txtConstraints[$x] != "") ) {
+    if ( ($selConstraints[$x] != "") and ($txtConstraints[$x] != "") ) {
         $numWhere = $numWhere + 1;
 
         //If this is supposed to be an integer
@@ -182,11 +182,11 @@ for ($x = 0; $x < 3; $x++) {
 
             //Convert this into an integer
             $converter = $selConstraints[$x];
-            $selConstraints[$x] = (int)$converter;
+            $converter = (int)$converter;
         }
 
         //Also, if it turns out this constrainted was checked off as an integer but contains non-integer characters,
-        if ( ($chkInts[$x] == 1) and (!is_int($selConstraints[$x])) ) {
+        if ( ($chkInts[$x] == 1) and (!is_int($converter)) ) {
             //Exit the script
             echo "<a href='$go_back'>Go Back</a>";
             exit("You tried to input a non-integer character in a text-box that you labeled as being an integer!  Shame on you!");
@@ -198,32 +198,27 @@ for ($x = 0; $x < 3; $x++) {
 for ($x = 0; $x < 3; $x++) {
 
     //If both the constraint select-box AND the constraint text-box are filled out
-    if ( ($selConstraints[$x] != "None") and ($txtConstraints[$x] != "") ) {
+    if ( ($selConstraints[$x] != "") and ($txtConstraints[$x] != "") ) {
 
         //Add the appropriate text to the WHERE segment
         $stmtWhere .= " ";
+
+        //If this is an int
+        if ($chkInts[$x] == 1) {
+            $stmtWhere .= "CAST(";
+        }
+
         $stmtWhere .= $selConstraints[$x];
 
         //If this is an int
         if ($chkInts[$x] == 1) {
             //Omit the quotes
-            $stmtWhere .= " LIKE %";
-        }
-        //Otherwise put them on
-        else {
-            $stmtWhere .= " LIKE \"%";
+            $stmtWhere .= " AS TEXT)";
         }
 
+        $stmtWhere .= " LIKE \"%";
         $stmtWhere .= $txtConstraints[$x];
-
-        //Again, if this value is an int
-        if ($chkInts[$x] == 1) {
-            //Omit the quotes
-            $stmtWhere .= "%";
-        }
-        else {
-            $stmtWhere .= "%\"";
-        }
+        $stmtWhere .= "%\"";
 
         //If our counter doesn't indicate we're at the last value
         if ($counter < $numWhere) {
@@ -256,112 +251,6 @@ $stmtQuery .= $stmtWhere;
 echo "<br><p>Full Query: ";
 echo $stmtQuery;
 echo "</p><br>";
-
-
-
-//=====Send the Query to the DB and Store Results=====
-
-
-
-//Variables for storing the required credentials
-$servername = "localhost";
-$username = "root";
-$password = "odOrXPVk5xcTdgvP";
-$databasename = "LACrimeFixMe";
-
-//Establish PDO connection
-try
-    {
-    //The actual database connection line
-    $connection = new PDO("mysql:host=$servername;dbname=$databasename", $username, $password);
-
-    //Set the PDO error mode to exception so we can return proper error messages
-    $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo "<br>Connected successfully<br>"; 
-    }
-
-//If the above code fails (i.e. an exception is caught), print the appropriate error message
-catch(PDOException $errmessage)
-    {
-    echo "Connection failed: " . $errmessage->getMessage();
-    }
-
-//Issue query and store results
-$query = $connection->query($stmtQuery);
-$results = $query->setFetchMode(PDO::FETCH_NUM);
-
-//Temporarily vomit the contents of the query
-echo "<br>Temporarily vomiting query results:<br>";
-echo $results;
-echo "<br>The value of numSelect is ";
-echo $numSelect;
-echo ".<br>";
-
-
-
-//=====Building the Results Table=====
-
-
-
-//Variables for setting up the results table
-$counter = 0;
-
-//Create an array for storing the labels of the fields we're selecting
-$labels = array_fill(0, $numSelect, "blank");
-
-//For each Select-box we had on the HTML page
-for ($x = 0; $x < 6; $x++) {
-
-    //If the user provided a value for it
-    if ($selFields[$x] != "None") {
-
-        //Store it in the labels array and increment the counter
-        $labels[$counter] = $selFields[$x];
-        $counter = $counter + 1;
-    }
-}
-
-//Now we can initialize the table and its first row
-echo "<table id='table1' border='1'>\n";
-echo "<tr>";
-
-//For each data item in this first table row
-for ($x = 0; $x < $numSelect; $x++) {
-
-    //Build a data item that contains the appropriate label
-    echo "<td>";
-    echo $labels[$x];
-    echo "</td>";
-}
-
-//Cap off this first table row
-echo "</tr>";
-
-//Now, let's populate the rest of this table for as long as we can pull a row of data from $results
-while ($row = $query->fetch()) {
-
-    //Initialize a new row
-    echo "<tr>";
-
-    //For each label we've identified in this row of data
-    for ($x = 0; $x < $numSelect; $x++) {
-
-        //Build a data item
-        echo "<td>";
-        echo $row[$x];
-        echo "</td>";
-    }
-
-    //And cap off this row
-    echo "</tr>";
-}
-
-//Close of this table
-echo "</table><br><br>";
-
-//Finally, close the connection to the database
-$connection = null;
-$query = null;
 
 
 
@@ -440,6 +329,113 @@ for ($x = 0; $x < 3; $x++) {
 }
 
 echo "</p><br>";
+
+
+
+//=====Send the Query to the DB and Store Results=====
+
+
+
+//Variables for storing the required credentials
+$servername = "localhost";
+$username = "root";
+$password = "odOrXPVk5xcTdgvP";
+$databasename = "LACrimeFixMe";
+
+//Establish PDO connection
+try
+    {
+    //The actual database connection line
+    $connection = new PDO("mysql:host=$servername;dbname=$databasename", $username, $password);
+
+    //Set the PDO error mode to exception so we can return proper error messages
+    $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "<br>Connected successfully<br>"; 
+    }
+
+//If the above code fails (i.e. an exception is caught), print the appropriate error message
+catch(PDOException $errmessage)
+    {
+    echo "Connection failed: " . $errmessage->getMessage();
+    }
+
+//Issue query and store results
+$query = $connection->query($stmtQuery);
+$results = $query->setFetchMode(PDO::FETCH_NUM);
+
+//Temporarily vomit the contents of the query
+echo "<br>Temporarily vomiting query results:<br>";
+echo $results;
+echo "<br>The value of numSelect is ";
+echo $numSelect;
+echo ".<br>";
+
+
+
+//=====Building the Results Table=====
+
+
+
+//Variables for setting up the results table
+$counter = 0;
+
+//Create an array for storing the labels of the fields we're selecting
+$labels = array_fill(0, $numSelect, "blank");
+
+//For each Select-box we had on the HTML page
+for ($x = 0; $x < 6; $x++) {
+
+    //If the user provided a value for it
+    if ($selFields[$x] != "") {
+
+        //Store it in the labels array and increment the counter
+        $labels[$counter] = $selFields[$x];
+        $counter = $counter + 1;
+    }
+}
+
+//Now we can initialize the table and its first row
+echo "<table id='table1' border='1'>\n";
+echo "<tr>";
+
+//For each data item in this first table row
+for ($x = 0; $x < $numSelect; $x++) {
+
+    //Build a data item that contains the appropriate label
+    echo "<td>";
+    echo $labels[$x];
+    echo "</td>";
+}
+
+//Cap off this first table row
+echo "</tr>";
+
+//Now, let's populate the rest of this table for as long as we can pull a row of data from $results
+while ($row = $query->fetch()) {
+
+    //Initialize a new row
+    echo "<tr>";
+
+    //For each label we've identified in this row of data
+    for ($x = 0; $x < $numSelect; $x++) {
+
+        //Build a data item
+        echo "<td>";
+        echo $row[$x];
+        echo "</td>";
+    }
+
+    //And cap off this row
+    echo "</tr>";
+}
+
+//Close of this table
+echo "</table><br><br>";
+
+//Finally, close the connection to the database
+$connection = null;
+$query = null;
+
 
 
 //=====A back button=====

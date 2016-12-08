@@ -1,5 +1,7 @@
 <?php
 
+include_once 'nav.php';	
+
 //Variables for storing the required credentials
 
 $servername = "localhost";
@@ -53,7 +55,21 @@ $PrecinctNumber = $_POST["PrecinctNumber"];
 echo $PrecinctNumber;
 echo "<br>";
 
-
+//Check if precinct number is a valid integer between 1 and 21
+if ((ctype_digit((string)$PrecinctNumber)) == False) {
+	echo "<p>Precinct number is not an integer</p>";
+	echo "<br>";
+	echo "<p>Aborting execution</p>";
+	echo "<br>";
+	exit();
+}
+if (intval($PrecinctNumber) < 1 or intval($PrecinctNumber) > 21) {
+	echo "<p>Precinct number is not between 1 and 21</p>";
+	echo "<br>";
+	echo "<p>Aborting execution</p>";
+	echo "<br>";
+	exit();
+}
 
 
 

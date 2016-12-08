@@ -1,7 +1,9 @@
 <html>
 <body>
+	
+<?php include_once 'nav.php'; ?>
 
-<h1></h1>
+<h1>Number of Reports filed by an Officer</h1>
 
 <p><b>Data Format</b></p>
 

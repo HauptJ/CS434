@@ -1,5 +1,7 @@
 <?php
 
+include_once 'nav.php';	
+
 //Variables for storing the required credentials
 
 $servername = "localhost";
@@ -45,6 +47,8 @@ catch(PDOException $errmessage)
     
 echo "<html>";
 echo "<body>";
+
+include_once 'nav.php';	
 	
 echo "<h1>Given Data</h1>";
 
@@ -54,8 +58,23 @@ echo $PrecinctNumber;
 echo "<br>";
 
 
-
-
+//Check if precinct number is a valid integer between 1 and 21
+if ((ctype_digit((string)$PrecinctNumber)) == False) {
+	echo "<p>Precinct number is not an integer</p>";
+	echo "<br>";
+	echo "<p>Aborting execution</p>";
+	echo "<br>";
+	exit();
+}
+if (intval($PrecinctNumber) < 1 or intval($PrecinctNumber) > 21) {
+	echo "<p>Precinct number is not between 1 and 21</p>";
+	echo "<br>";
+	echo "<p>Aborting execution</p>";
+	echo "<br>";
+	exit();
+}
+	
+	
 
 
 
@@ -141,7 +160,7 @@ echo "<p>SELECT File_ReportNumber, Mem_PrecinctNumber, Jurisdiction FROM FiledBy
 WHERE File_DateGraduated = Mem_DateGraduated AND File_BadgeNumber = Mem_BadgeNumber AND PrecinctNumber = Mem_PrecinctNumber AND Jurisdiction 
 IN (SELECT Jurisdiction FROM PoliceDepartment WHERE PrecinctNumber = ", $PrecinctNumber, ");</p>";
 
-echo "<tr><th>Number of Number of Officers</th><th>Date Graduated</th></tr>";
+echo "<tr><th>Report Number</th><th>Precinct Number</th><th>Jurisdiction</th></tr>";
 
 //For unique query 3
 //Extract the results using the TableRows class

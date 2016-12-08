@@ -1,5 +1,7 @@
 <html>
 <body>
+	
+<?php include_once 'nav.php'; ?>
 
 <h1>New Criminal Incident</h1>
 

@@ -1,5 +1,7 @@
 <html>
 <body>
+	
+<?php include_once 'nav.php'; ?>
 
 <h1>Reports Filed in a Precinct</h1>
 

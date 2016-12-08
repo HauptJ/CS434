@@ -1,5 +1,7 @@
 <?php
 
+include_once 'nav.php';	
+
 //Variables for storing the required credentials
 
 $servername = "localhost";
