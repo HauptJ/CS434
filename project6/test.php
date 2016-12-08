@@ -96,6 +96,10 @@ for ($x = 0; $x < 6; $x++) {
     }
 }
 
+echo "<br><p>SELECT segment: ";
+echo $stmtSelect;
+echo "</p><br>";
+
 
 //---Building the FROM segment---
 
@@ -238,7 +242,7 @@ $results = $query->setFetchMode(PDO::FETCH_ASSOC);
 
 //=====Building the Results Table=====
 
-
+echo "test print";
 
 //Variables for setting up the results table
 $counter = 0;
