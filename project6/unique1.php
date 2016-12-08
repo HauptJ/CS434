@@ -7,6 +7,7 @@
 <h1>Number of Reports filed by an Officer</h1>
 
 <p><b>Data Format</b></p>
+<p>Enter a badge number as an integer between 1 and 1000.</p>
 
 
 <form action="unique1Results.php" method="post">
