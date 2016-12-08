@@ -1,0 +1,11 @@
+README:
+
+Installation:
+
+1.) Create a MySQL \ MariaDB database.
+2.) Import .sql file into the database.
+3.) Copy the web application files to web server.
+4.) Change database connection info in php files to work with your database server. 
+	You will have to change hostname, password, database, and user
+	
+5.) Open web application in your browser. 
