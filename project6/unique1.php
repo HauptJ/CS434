@@ -1,4 +1,5 @@
 <html>
+<title>Number of Reports filed by an Officer</title>
 <body>
 	
 <?php include_once 'nav.php'; ?>

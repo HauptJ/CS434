@@ -1,4 +1,5 @@
 <html>
+<title>New Criminal Report</title>	
 <body>
 	
 <?php include_once 'nav.php'; ?>

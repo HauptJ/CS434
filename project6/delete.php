@@ -1,4 +1,5 @@
 <html>
+<title>Remove Crininal Incident</title>	
 <body>
 	
 <?php include_once 'nav.php'; ?>

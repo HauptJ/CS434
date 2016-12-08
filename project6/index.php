@@ -1,258 +1,232 @@
-<?php
+<!DOCTYPE html>
+<html>
 
-//Variables for storing the required credentials
 
-$servername = "localhost";
 
-$username = "root";
+  <head>
 
-$password = "odOrXPVk5xcTdgvP";
+    <title>LA Crime</title>
 
-$databasename = "LACrimeFixMe";
+  </head>
+
+<?php include_once 'nav.php'; ?>
+
+    <body>
+
+        <script src="test.js"></script>
+        <noscript>Your browser does not support Javascript!!!!!</noscript>
 
+        <form name="db_query" id="formSearch" action="test.php" method="post">
 
-//Try to connect to our database
-
-try
-
-    {
-
-    //The actual database connection line
-
-    $connection = new PDO("mysql:host=$servername;dbname=$databasename", $username, $password);
-
-
-
-    //Set the PDO error mode to exception so we can return proper error messages
-
-    $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    echo "Connected successfully"; 
-
-    }
-
-
-
-//If the above code fails (i.e. an exception is caught), print the appropriate error message
-
-catch(PDOException $errmessage)
-
-    {
-
-    echo "Connection failed: " . $errmessage->getMessage();
-
-    }
-
-
-
-
-
-//This essentially iterates through a tuple's fields and puts them in a single table row
-
-class TupleResult extends RecursiveIteratorIterator { 
-
-    function __construct($it) { 
-
-        parent::__construct($it, self::LEAVES_ONLY); 
-
-    }
-
-
-
-    function current() {
-
-        return "<td style='width:150px;border:1px solid black;'>" . parent::current(). "</td>";
-
-    }
-
-
-
-    function beginChildren() { 
-
-        echo "<tr>"; 
-
-    } 
-
-
-
-    function endChildren() { 
-
-        echo "</tr>" . "\n";
-
-    } 
-
-} 
-
-
-
-
-
-
-//Variables for executing custom queries later (needs to be rearranged with the creation of table headers)
-
-
-
-
-//Now, attempt to run the test queries (this will be replaced with custom query code later)
-
-
-
-//First, use the Prepare() function to store the SELECT query for use with our database
-
-$UniqueQuery1 = $connection->prepare("SELECT COUNT(File_ReportNumber), FirstName, LastName
-
-FROM PoliceOfficer, FiledBy
-
-WHERE File_DateGraduated = DateGraduated AND File_BadgeNumber = BadgeNumber
-
-GROUP BY FirstName, LastName;");
-
-//Unique Querry 2
-$UniqueQuery2 = $connection->prepare("SELECT COUNT(DateGraduated), DateGraduated
-
-FROM PoliceOfficer NATURAL JOIN PoliceDepartment
-
-GROUP BY BadgeNumber;");
-
-//Unique Querry 3
-$UniqueQuery3 = $connection->prepare("SELECT File_ReportNumber, Mem_PrecinctNumber, Jurisdiction
-FROM FiledBy, MemberOf, PoliceDepartment
-WHERE File_DateGraduated = Mem_DateGraduated AND File_BadgeNumber = Mem_BadgeNumber
-AND PrecinctNumber = Mem_PrecinctNumber AND Jurisdiction IN
-(SELECT Jurisdiction
-FROM PoliceDepartment
-WHERE PrecinctNumber = 7);");
-
-
-
-//Execute the queries
-
-$UniqueQuery1->execute();
-
-$UniqueQuery2->execute();
-
-$UniqueQuery3->execute();
-
-
-
-//Create a results array and then extract + format the returned data from the execute() statement
-
-$results = $UniqueQuery1->setFetchMode(PDO::FETCH_ASSOC);
-
-//Table 1
-
-//First, start off the HTTP that creates a table of returned results
-
-echo "<table style='border: solid 1px black'>";
-
-echo "<p>Number of Reports filed by an Officer</p>";
-echo "<br>";
-echo "<p>SELECT COUNT(File_ReportNumber), FirstName, LastName
-
-FROM PoliceOfficer, FiledBy
-
-WHERE File_DateGraduated = DateGraduated AND File_BadgeNumber = BadgeNumber
-
-GROUP BY FirstName, LastName;</p>";
-
-echo "<tr><th>Number of Reports</th><th>Firstname</th><th>Lastname</th></tr>";
-
-
-//Extract the results using the TableRows class
-
-foreach(new TupleResult(new RecursiveArrayIterator($UniqueQuery1->fetchAll())) as $key=>$value)
-
-{
-
-    echo $value;
-
-}
-
-//END Table
-echo "</table>";
-
-echo "<br></br>";
-
-
-//For Unique Query 2: Create a results array and then extract + format the returned data from the execute() statement
-
-$results2 = $UniqueQuery2->setFetchMode(PDO::FETCH_ASSOC);
-
-
-//Table2
-
-echo "<table style='border: solid 1px black'>";
-
-echo "<p>Number of Officers that graduated on a given day</p>";
-echo "<br>";
-echo "<p>SELECT COUNT(DateGraduated), DateGraduated
-
-FROM PoliceOfficer NATURAL JOIN PoliceDepartment
-
-GROUP BY BadgeNumber;</p>";
-
-echo "<tr><th>Number of Police Officers</th><th>Date Graduated</th></tr>";
-
-//Extract the results using the TableRows class
-
-foreach(new TupleResult(new RecursiveArrayIterator($UniqueQuery2->fetchAll())) as $key=>$value)
-
-{
-
-    echo $value;
-
-}
-
-//END Table
-echo "</table>";
-
-echo "<br></br>";
-
-
-//For Unique Query 3: Create a results array and then extract + format the returned data from the execute() statement
-
-$results3 = $UniqueQuery3->setFetchMode(PDO::FETCH_ASSOC);
-
-
-//Table3
-
-echo "<table style='border: solid 1px black'>";
-
-echo "<p>Reports Filed In Precinct 7 and the Jurisdiction Wilshire</p>";
-echo "<br>";
-echo "<p>SELECT File_ReportNumber, Mem_PrecinctNumber, Jurisdiction
-FROM FiledBy, MemberOf, PoliceDepartment
-WHERE File_DateGraduated = Mem_DateGraduated AND File_BadgeNumber = Mem_BadgeNumber
-AND PrecinctNumber = Mem_PrecinctNumber AND Jurisdiction IN
-(SELECT Jurisdiction
-FROM PoliceDepartment
-WHERE PrecinctNumber = 7);</p>";
-
-echo "<tr><th>Report Number</th><th>Precinct</th><th>Jurisdiction</th></tr>";
-
-//Extract the results using the TableRows class
-
-foreach(new TupleResult(new RecursiveArrayIterator($UniqueQuery3->fetchAll())) as $key=>$value)
-
-{
-
-    echo $value;
-
-}
-
-//END Table
-echo "</table>";
-
-echo "<br></br>";
-
-
-
-//Close connection and wrap up the returned table of results
-
-$connection = null;
-
-//echo "</table>";
-
-//echo "<br>";
-
-?>
+            <fieldset>
+
+                <legend>Record Types to Query</legend>
+
+                <input type="checkbox" name="chkCrimeReport" value="CrimeReport" onClick="return KeepCount();">Crime Reports<br>
+                <input type="checkbox" name="chkCriminalIncident" value="CriminalIncident" onClick="return KeepCount();">Criminal Incidents<br>
+                <input type="checkbox" name="chkDefinedBy" value="DefinedBy" onClick="return KeepCount();">Records Indicating Criminal Incidents Being Defined By Statutes<br>
+                <input type="checkbox" name="chkFiledBy" value="FiledBy" onClick="return KeepCount();">Records Indicating Crime Reports Filed By Police Officers<br>
+                <input type="checkbox" name="chkMemberOf" value="MemberOf" onClick="return KeepCount();">Records Indicating Police Officers Being Members Of Police Departments<br>
+                <input type="checkbox" name="chkPoliceDepartment" value="PoliceDepartment" onClick="return KeepCount();">Police Departments<br>
+                <input type="checkbox" name="chkPoliceOfficer" value="PoliceOfficer" onClick="return KeepCount();">Police Officers<br>
+                <input type="checkbox" name="chkReportedThrough" value="ReportedThrough" onClick="return KeepCount();">Records Indicating Criminal Incidents Being Reported Through Crime Reports<br>
+                <input type="checkbox" name="chkStatusUpdate" value="StatusUpdate" onClick="return KeepCount();">Status Updates<br>
+                <input type="checkbox" name="chkStatute" value="Statute" onClick="return KeepCount();">Statutes
+
+            </fieldset>
+
+            <br><br>
+
+            <fieldset>
+
+                <legend>Fields to Extract From Records</legend>
+
+                    <select name="selFields1" id="sf1" onClick="UpdateDropdowns();">
+
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+
+                    </select>
+
+                    <select name="selFields2" id="sf2" onClick="UpdateDropdowns();">
+
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+
+                    </select>
+
+                    <select name="selFields3" id="sf3" onClick="UpdateDropdowns();">
+
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+
+                    </select>
+
+                    <select name="selFields4" id="sf4" onClick="UpdateDropdowns();">
+
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+
+                    </select>
+
+                    <select name="selFields5" id="sf5" onClick="UpdateDropdowns();">
+
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+
+                    </select>
+
+                    <select name="selFields6" id="sf6" onClick="UpdateDropdowns();">
+
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+
+                    </select>
+
+            </fieldset>
+
+            <br><br>
+
+            <fieldset>
+
+            <legend>Search Criteria</legend>
+
+                <select name="selConstraints1" id="sc1" onClick="UpdateConstraints();">
+
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+
+                </select>
+
+                <input type="text" name="txtConstraints1" value="">
+                <input type="checkbox" name="chkInt1" ">Integer Value<br>
+
+                <select name="selConstraints2" id="sc2" onClick="UpdateConstraints();">
+
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+
+                </select>
+
+                <input type="text" name="txtConstraints2" value="">
+                <input type="checkbox" name="chkInt2" ">Integer Value<br>
+
+                <select name="selConstraints3" id="sc3" onClick="UpdateConstraints();">
+
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+                        <option value=" "> </option>
+
+                </select>
+
+                <input type="text" name="txtConstraints3" value="">
+                <input type="checkbox" name="chkInt3" ">Integer Value<br>
+
+            </fieldset>
+
+            <br><br><input type="submit" value="Submit">
+
+        </form>
+
+    </body>
+
+
+</html>

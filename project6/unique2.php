@@ -1,4 +1,5 @@
 <html>
+<title>Number of Reports filed in a Precinct</title>
 <body>
 
 <?php include_once 'nav.php'; ?>

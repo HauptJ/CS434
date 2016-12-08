@@ -1,4 +1,5 @@
 <html>
+<title>Reports Filed in a Precinct</title>
 <body>
 	
 <?php include_once 'nav.php'; ?>
