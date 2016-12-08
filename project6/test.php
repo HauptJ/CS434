@@ -60,13 +60,13 @@ $stmtWhere = "WHERE";
 
 
 //Variables for properly parsing the SELECT segment
-$numSel = 0;
+$numSelect = 0;
 $counter = 1;
 
 //First, iterate through our list of select fields to see how many there are
 for ($x = 0; $x < 6; $x++) {
     if ($selFields[$x] != "None") {
-        $numSel = $numSel + 1;
+        $numSelect = $numSelect + 1;
     }
 }
 
@@ -81,7 +81,7 @@ for ($x = 0; $x < 6; $x++) {
         $stmtSelect .= $selFields[$x];
 
         //If our counter doesn't indicate that we're at the last value
-        if ($counter < $numSel) {
+        if ($counter < $numSelect) {
 
             //Prepare the statement for another value
             $stmtSelect .= ",";
@@ -234,15 +234,21 @@ catch(PDOException $errmessage)
     }
 
 //Issue query and store results
-$query = $connection->prepare($stmtQuery);
-$query->execute();
-$results = $query->setFetchMode(PDO::FETCH_ASSOC);
+$query = $connection->query($stmtQuery);
+$results = $query->setFetchMode(PDO::FETCH_NUM);
+
+//Temporarily vomit the contents of the query
+echo "<br>Temporarily vomiting query results:<br>";
+echo $results;
+echo "<br>The value of numSelect is ";
+echo $numSelect;
+echo ".<br>";
 
 
 
 //=====Building the Results Table=====
 
-echo "test print";
+
 
 //Variables for setting up the results table
 $counter = 0;
@@ -263,7 +269,7 @@ for ($x = 0; $x < 6; $x++) {
 }
 
 //Now we can initialize the table and its first row
-echo "<table id='table1'>\n";
+echo "<table id='table1' border='1'>\n";
 echo "<tr>";
 
 //For each data item in this first table row
@@ -279,7 +285,7 @@ for ($x = 0; $x < $numSelect; $x++) {
 echo "</tr>";
 
 //Now, let's populate the rest of this table for as long as we can pull a row of data from $results
-while ($row = $results->fetch_assoc()) {
+while ($row = $query->fetch()) {
 
     //Initialize a new row
     echo "<tr>";
@@ -301,7 +307,8 @@ while ($row = $results->fetch_assoc()) {
 echo "</table><br><br>";
 
 //Finally, close the connection to the database
-$connection->close();
+$connection = null;
+$query = null;
 
 
 

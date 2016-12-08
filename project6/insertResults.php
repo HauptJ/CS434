@@ -70,19 +70,129 @@ echo "</html>";
 
 //Implement with prepared statements
 //http://www.w3schools.com/php/php_mysql_prepared_statements.asp
-$InsertQuery = $connection->prepare("INSERT INTO CriminalIncident (IncidentNumber, TimeOccurred, DateOccurred, Address) VALUES("$IncidentNumber, $TimeOccurred, $DateOccurred, $Address");");
- 
+$InsertQuery = $connection->prepare("INSERT INTO CriminalIncident (IncidentNumber, TimeOccurred, DateOccurred, Address) 
+VALUES(:IncidentNumberS, :TimeOccurredS, :DateOccurredS, :AddressS)");
+
+try {
+
+	$InsertQuery->execute(array(
+	"IncidentNumberS" =>  $IncidentNumber,
+	"TimeOccurredS" => $TimeOccurred,
+	"DateOccurredS" => $DateOccurred,
+	"AddressS" => $Address
+	));
+} catch (PDOException $e) {
+	if ($e->errorInfo[1] == 1062) {
+      // duplicate entry, print error to user
+		echo "<p>Entry already exists in database</p>";
+	} else {
+      // an error other than duplicate entry occurred
+		echo "<p>Something was wrong with the insert query. Please try again</p>";
+	}
+}
  
  
 //Execute the query
+
+//echo $InsertQuery;
  
-$InsertQuery->execute();
+//$InsertQuery->execute();
  
  
  
 //Create a results array and then extract + format the returned data from the execute() statement
  
-$InsertResults = $InsertQuery->setFetchMode(PDO::FETCH_ASSOC);
+//$InsertResults = $InsertQuery->setFetchMode(PDO::FETCH_ASSOC);
+
+
+//This essentially iterates through a tuple's fields and puts them in a single table row
+
+class TupleResult extends RecursiveIteratorIterator { 
+
+    function __construct($it) { 
+
+        parent::__construct($it, self::LEAVES_ONLY); 
+
+    }
+
+
+
+    function current() {
+
+        return "<td style='width:150px;border:1px solid black;'>" . parent::current(). "</td>";
+
+    }
+
+
+
+    function beginChildren() { 
+
+        echo "<tr>"; 
+
+    } 
+
+
+
+    function endChildren() { 
+
+        echo "</tr>" . "\n";
+
+    } 
+
+} 
+
+
+
+
+
+
+//Variables for executing custom queries later (needs to be rearranged with the creation of table headers)
+
+
+
+
+//Now, attempt to run the test queries (this will be replaced with custom query code later)
+
+
+
+//First, use the Prepare() function to store the SELECT query for use with our database
+
+$TestInsertQuery = $connection->prepare("SELECT IncidentNumber, TimeOccurred, DateOccurred, Address FROM CriminalIncident WHERE IncidentNumber = :IncidentNumberS AND TimeOccurred = :TimeOccurredS AND DateOccurred = :DateOccurredS AND Address = :AddressS");
+
+$TestInsertQuery->execute(array(
+"IncidentNumberS" =>  $IncidentNumber,
+"TimeOccurredS" => $TimeOccurred,
+"DateOccurredS" => $DateOccurred,
+"AddressS" => $Address
+));
+
+$results = $TestInsertQuery->setFetchMode(PDO::FETCH_ASSOC);
+
+//First, start off the HTTP that creates a table of returned results
+
+echo "<table style='border: solid 1px black'>";
+
+echo "<p>Your entered data as seen in the database</p>";
+echo "<br>";
+
+
+echo "<tr><th>Incident Number</th><th>Time Occurred</th><th>Date Occurred</th><th>Address</th></tr>";
+
+
+//Extract the results using the TableRows class
+
+foreach(new TupleResult(new RecursiveArrayIterator($TestInsertQuery->fetchAll())) as $key=>$value)
+
+{
+
+    echo $value;
+
+}
+
+//END Table
+echo "</table>";
+
+echo "<br></br>";
 
 //Close DB connection
 $connection = null;
