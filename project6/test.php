@@ -29,6 +29,8 @@ $chkTables = array(isset($_POST["chkCrimeReport"]), isset($_POST["chkCriminalInc
                    isset($_POST["chkPoliceOfficer"]), isset($_POST["chkReportedThrough"]), isset($_POST["chkStatusUpdate"]),
                    isset($_POST["chkStatute"]));
 
+$chkInts = array(isset($_POST["chkInt1"]), isset($_POST["chkInt2"]), isset($_POST["chkInt3"]));
+
 //Array of Field Select-boxes
 $selFields = array(test_input($_POST["selFields1"]), test_input($_POST["selFields2"]), test_input($_POST["selFields3"]),
                    test_input($_POST["selFields4"]), test_input($_POST["selFields5"]), test_input($_POST["selFields6"]));
@@ -42,6 +44,9 @@ $txtConstraints = array(test_input($_POST["txtConstraints1"]), test_input($_POST
 //This is the array used to add in values to the query
 $tables = array("CrimeReport", "CriminalIncident", "DefinedBy", "FiledBy", "MemberOf",
                  "PoliceDepartment", "PoliceOfficer", "ReportedThrough", "StatusUpdate", "Statute");
+
+//The "Go-Back" link
+$go_back = htmlspecialchars($_SERVER['HTTP_REFERER']);
 
 
 
@@ -98,6 +103,8 @@ for ($x = 0; $x < 6; $x++) {
 
 echo "<br><p>SELECT segment: ";
 echo $stmtSelect;
+echo " at numSelect of ";
+echo $numSelect;
 echo "</p><br>";
 
 
@@ -141,9 +148,20 @@ for ($x = 0; $x < 10; $x++) {
     }
 }
 
+
 echo "<br><p>FROM segment: ";
 echo $stmtFrom;
+echo " at numFrom of ";
+echo $numFrom;
 echo "</p><br>";
+
+//If, at this point, we have no SELECT or FROM values
+if ( ($numSelect < 1) or ($numFrom < 1) ) {
+
+    //Exit with the appropriate message
+    echo "<a href='$go_back'>Go Back</a>";
+    exit("How can the database search for data if you don't tell it what you want or where to get it?");
+}
 
 
 //---Building the WHERE segment---
@@ -156,6 +174,13 @@ $counter = 1;
 for ($x = 0; $x < 3; $x++) {
     if ( ($selConstraints[$x] != "None") and ($txtConstraints[$x] != "") ) {
         $numWhere = $numWhere + 1;
+
+        //Also, if it turns out this constrainted was checked off as an integer but contains non-integer characters,
+        if ( ($chkInts[$x] == 1) and (!is_int($selConstraints[$x])) ) {
+            //Exit the script
+            echo "<a href='$go_back'>Go Back</a>";
+            exit("You tried to input a non-integer character in a text-box that you labeled as being an integer!  Shame on you!");
+        }
     }
 }
 
@@ -168,9 +193,27 @@ for ($x = 0; $x < 3; $x++) {
         //Add the appropriate text to the WHERE segment
         $stmtWhere .= " ";
         $stmtWhere .= $selConstraints[$x];
-        $stmtWhere .= " LIKE \"%";
+
+        //If this is an int
+        if ($chkInts[$x] == 1) {
+            //Omit the quotes
+            $stmtWhere .= " LIKE %";
+        }
+        //Otherwise put them on
+        else {
+            $stmtWhere .= " LIKE \"%";
+        }
+
         $stmtWhere .= $txtConstraints[$x];
-        $stmtWhere .= "%\"";
+
+        //Again, if this value is an int
+        if ($chkInts[$x] == 1) {
+            //Omit the quotes
+            $stmtWhere .= "%";
+        }
+        else {
+            $stmtWhere .= "%\"";
+        }
 
         //If our counter doesn't indicate we're at the last value
         if ($counter < $numWhere) {
@@ -390,7 +433,6 @@ echo "</p><br>";
 
 
 //=====A back button=====
-$go_back = htmlspecialchars($_SERVER['HTTP_REFERER']);
 echo "<a href='$go_back'>Go Back</a>";
 
 ?>
