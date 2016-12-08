@@ -63,8 +63,8 @@ echo "Address: ";
 $Address =  $_POST["Address"];
 echo $Address;
 
-echo "</body>";
-echo "</html>";
+//echo "</body>";
+//echo "</html>";
 
 //-----INSERT-----// WORKS
 
@@ -196,6 +196,9 @@ echo "<br></br>";
 
 //Close DB connection
 $connection = null;
+
+echo "</body>";
+echo "</html>";
 
 ?>
 

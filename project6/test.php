@@ -118,8 +118,9 @@ $limit = 0;
 
 //First, iterate through our checkboxes to see how many we've selected
 for ($x = 0; $x < 10; $x++) {
-    if ($chkTables == 1) {
+    if ($chkTables[$x] == 1) {
         $numFrom = $numFrom + 1;
+        echo "<br><p>numFrom + 1</p><br>";
     }
 }
 
