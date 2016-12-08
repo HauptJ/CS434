@@ -170,11 +170,20 @@ if ( ($numSelect < 1) or ($numFrom < 1) ) {
 //Variables for properly parsing the WHERE segment
 $numWhere = 0;
 $counter = 1;
+$converter = 999;
 
 //First, iterate through our constraints to see how many are fully filled out
 for ($x = 0; $x < 3; $x++) {
     if ( ($selConstraints[$x] != "None") and ($txtConstraints[$x] != "") ) {
         $numWhere = $numWhere + 1;
+
+        //If this is supposed to be an integer
+        if ($chkInts[$x] == 1) {
+
+            //Convert this into an integer
+            $converter = $selConstraints[$x];
+            $selConstraints[$x] = (int)$converter;
+        }
 
         //Also, if it turns out this constrainted was checked off as an integer but contains non-integer characters,
         if ( ($chkInts[$x] == 1) and (!is_int($selConstraints[$x])) ) {
