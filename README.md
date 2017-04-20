@@ -1,2 +1,2 @@
-# CS434
+# CS 434
 SIUE CS434 Fall 16
