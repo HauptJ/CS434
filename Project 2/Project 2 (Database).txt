@@ -1,0 +1,60 @@
+DBMS: MySQL / MariaDB on Linux
+
+Relation 1: Statute(Code Designation, Elements of Crime)
+
+Code Designation --> Elements of Crime
+
+
+Relation 2: Criminal Incident(Incident Number, Time, Date, Address, Description)
+
+Incident Number --> Time, Date, Address, Description
+
+
+Relation 3: Defined By(Statute, Criminal Incident)
+
+Incident Number --> Code Designation
+Code Designation --> Description
+
+
+Relation 4: Crime Report(Report Number, Date Filed, Jurisdiction)
+
+Report Number --> Date Filed, Jurisdiction
+
+
+Relation 5: Reported Through(Criminal Incident, Crime Report)
+
+Incident Number --> Report Number
+Report Number --> Incident Number
+
+
+Relation 6: Status Update(Revision Number, Date, Status)
+
+None
+
+
+Relation 7: Given A(Crime Report, Status Update)
+
+Report Number, Revision Number --> Date, Status
+Report Number, Date --> Revision Number, Status
+
+
+Relation 8: Police Officer(Badge Number, Name, Graduation Date)
+
+Badge Number, Graduation Date --> Name
+Name, Badge Number --> Graduation Date
+
+
+Relation 9: Filed By(Crime Report, Police Officer)
+
+Name, Badge Number --> Report Number
+Badge Number, Graduation Date --> Report Number
+
+
+Relation 10: Police Department(Precinct Number, Jurisdiction)
+
+Precinct Number --> Jurisdiction
+
+
+Relation 11: Member Of(Police Officer, Police Department)
+
+Name, Badge Number --> Precinct Number
