@@ -7,4 +7,4 @@ Semester long group project in which we created a Mariadb / MySQL database using
 
 The project was hosted on a Centos 7 cloud server runnig Centmin Mod. 
 
-Partner: [Malkav Amonra](mailto:malkav.amonra@gmail.com)
+Partner: [Charles Helf / Malkav Amonra](mailto:malkav.amonra@gmail.com)
